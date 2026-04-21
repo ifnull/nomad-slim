@@ -19,8 +19,14 @@ die()  { printf '    [error] %s\n' "$*" >&2; exit 1; }
 
 confirm() {
   # $1=prompt, default N. returns 0 on yes.
-  local ans
-  read -rp "$1 [y/N]: " ans
+  # Reads from the controlling terminal so prompts work even when this
+  # script was invoked via `curl | sudo bash` (where stdin is the pipe).
+  local ans=""
+  if { : </dev/tty; } 2>/dev/null; then
+    read -rp "$1 [y/N]: " ans </dev/tty
+  else
+    read -rp "$1 [y/N]: " ans || true
+  fi
   [[ "$ans" =~ ^[Yy]$ ]]
 }
 

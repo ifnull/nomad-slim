@@ -45,11 +45,14 @@ else
   cp "$CAT_CACHE_UPSTREAM" "$CAT_CACHE"
 fi
 
+TTY_IN=/dev/stdin
+if { : </dev/tty; } 2>/dev/null; then TTY_IN=/dev/tty; fi
+
 prompt_number() {
   # $1=prompt $2=max (1..N valid)
   local ans
   while :; do
-    read -rp "$1" ans
+    read -rp "$1" ans <"$TTY_IN"
     [[ "$ans" =~ ^[0-9]+$ ]] && [ "$ans" -ge 1 ] && [ "$ans" -le "$2" ] && { echo "$ans"; return; }
     echo "  enter a number between 1 and $2" >&2
   done
@@ -152,7 +155,7 @@ done
 printf "  %-45s %6d MB total\n" "---" "$total"
 
 echo
-read -rp "Proceed with download? [y/N] " ans
+read -rp "Proceed with download? [y/N] " ans <"$TTY_IN"
 [[ "$ans" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 0; }
 
 # --- download --------------------------------------------------------------

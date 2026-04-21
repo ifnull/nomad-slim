@@ -29,10 +29,13 @@ if [ ! -f "$CACHE" ] || [ "$refresh" = "1" ]; then
   curl -fsSL "$MAPS_URL" -o "$CACHE"
 fi
 
+TTY_IN=/dev/stdin
+if { : </dev/tty; } 2>/dev/null; then TTY_IN=/dev/tty; fi
+
 prompt_number() {
   local ans
   while :; do
-    read -rp "$1" ans
+    read -rp "$1" ans <"$TTY_IN"
     [[ "$ans" =~ ^[0-9]+$ ]] && [ "$ans" -ge 1 ] && [ "$ans" -le "$2" ] && { echo "$ans"; return; }
     echo "  enter a number between 1 and $2" >&2
   done
@@ -71,7 +74,7 @@ for i in "${!state_titles[@]}"; do
 done
 echo "  (enter 'all', a single number, or a comma-separated list like '1,3,5')"
 
-read -rp "Pick state(s): " picks
+read -rp "Pick state(s): " picks <"$TTY_IN"
 picks="${picks// /}"
 
 urls=()
@@ -107,7 +110,7 @@ done
 printf "  %-30s %5d MB total\n" "---" "$total"
 
 echo
-read -rp "Proceed with download? [y/N] " ans
+read -rp "Proceed with download? [y/N] " ans <"$TTY_IN"
 [[ "$ans" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 0; }
 
 # --- download --------------------------------------------------------------
