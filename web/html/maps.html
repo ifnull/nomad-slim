@@ -55,36 +55,62 @@
     select.appendChild(opt);
   }
 
+  // Try the labeled base style first; fall back to a label-free inline style
+  // if the user hasn't run scripts/fetch-basemap-assets.sh yet.
+  const baseStyle = await fetch("/nomad-base-styles.json")
+    .then(r => r.ok ? r.json() : null)
+    .catch(() => null);
+
+  function minimalStyle(pmUrl) {
+    return {
+      version: 8,
+      sources: {
+        protomaps: {
+          type: "vector",
+          url: `pmtiles://${pmUrl}`,
+          attribution: '<a href="https://github.com/protomaps/basemaps">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+        }
+      },
+      layers: [
+        { id: "bg",         type: "background", paint: { "background-color": "#f7f4ec" } },
+        { id: "earth",      type: "fill", source: "protomaps", "source-layer": "earth",      paint: { "fill-color": "#ffffff" } },
+        { id: "landuse",    type: "fill", source: "protomaps", "source-layer": "landuse",    paint: { "fill-color": "#eef0e9" } },
+        { id: "water",      type: "fill", source: "protomaps", "source-layer": "water",      paint: { "fill-color": "#a6cde0" } },
+        { id: "boundaries", type: "line", source: "protomaps", "source-layer": "boundaries", paint: { "line-color": "#c8c8c8", "line-width": 1 } },
+        { id: "roads",      type: "line", source: "protomaps", "source-layer": "roads",      paint: { "line-color": "#888",   "line-width": 1 } },
+        { id: "buildings",  type: "fill", source: "protomaps", "source-layer": "buildings",  paint: { "fill-color": "#e0ddd4" } }
+      ]
+    };
+  }
+
+  function labeledStyle(pmUrl) {
+    // Deep-clone so repeated calls don't mutate the cached template.
+    const s = JSON.parse(JSON.stringify(baseStyle));
+    const origin = window.location.origin;
+    // Rewrite absolute URLs in the template (which assume the full-project
+    // admin host) to this server's origin and the selected PMTiles file.
+    if (typeof s.glyphs === "string") s.glyphs = s.glyphs.replace(/^https?:\/\/[^/]+/, origin);
+    if (typeof s.sprite === "string") s.sprite = s.sprite.replace(/^https?:\/\/[^/]+/, origin);
+    for (const src of Object.values(s.sources || {})) {
+      if (typeof src.url === "string" && src.url.startsWith("pmtiles://")) {
+        src.url = `pmtiles://${pmUrl}`;
+      }
+    }
+    return s;
+  }
+
   let map;
   async function show(name) {
-    const url = `/maps/${name}`;
-    const p = new pmtiles.PMTiles(url);
+    const pmPath = `/maps/${name}`;
+    const pmUrl = window.location.origin + pmPath;
+    const p = new pmtiles.PMTiles(pmPath);
     protocol.add(p);
     const h = await p.getHeader();
 
     if (map) map.remove();
     map = new maplibregl.Map({
       container: "map",
-      style: {
-        version: 8,
-        sources: {
-          protomaps: {
-            type: "vector",
-            url: `pmtiles://${url}`,
-            attribution: '<a href="https://github.com/protomaps/basemaps">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>'
-          }
-        },
-        // Minimal, label-free style — no external glyph/sprite fetches.
-        layers: [
-          { id: "bg",         type: "background", paint: { "background-color": "#f7f4ec" } },
-          { id: "earth",      type: "fill", source: "protomaps", "source-layer": "earth",      paint: { "fill-color": "#ffffff" } },
-          { id: "landuse",    type: "fill", source: "protomaps", "source-layer": "landuse",    paint: { "fill-color": "#eef0e9" } },
-          { id: "water",      type: "fill", source: "protomaps", "source-layer": "water",      paint: { "fill-color": "#a6cde0" } },
-          { id: "boundaries", type: "line", source: "protomaps", "source-layer": "boundaries", paint: { "line-color": "#c8c8c8", "line-width": 1 } },
-          { id: "roads",      type: "line", source: "protomaps", "source-layer": "roads",      paint: { "line-color": "#888",   "line-width": 1 } },
-          { id: "buildings",  type: "fill", source: "protomaps", "source-layer": "buildings",  paint: { "fill-color": "#e0ddd4" } }
-        ]
-      },
+      style: baseStyle ? labeledStyle(pmUrl) : minimalStyle(pmPath),
       center: [(h.minLon + h.maxLon) / 2, (h.minLat + h.maxLat) / 2],
       zoom: Math.max(h.minZoom, 4)
     });

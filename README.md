@@ -49,6 +49,17 @@ Then open <http://localhost:8080>.
 
   Or grab arbitrary regions from <https://maps.protomaps.com>.
 
+- **Labeled basemap (optional)** — by default the viewer renders a
+  label-free style so it makes zero external requests. To get roads/place
+  labels with a full Protomaps style, fetch the glyph/sprite bundle once:
+
+  ```bash
+  ./scripts/fetch-basemap-assets.sh  # ~21 MB, one-time
+  docker compose restart web
+  ```
+
+  The viewer auto-switches to the labeled style once the assets are present.
+
 - **Kolibri** — use Kolibri's built-in setup wizard at port 8300.
 
 ### Stopping
