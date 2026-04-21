@@ -57,5 +57,36 @@
     <code>.pmtiles</code> files in <code>data/maps/</code> — the Kiwix viewer
     auto-detects new ZIMs; the maps viewer rediscovers PMTiles on reload.
   </p>
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentProtocol = window.location.protocol;
+    const currentHostname = window.location.hostname;
+
+    document.querySelectorAll("[href],[src],[action]").forEach(el => {
+      const attr =
+        el.hasAttribute("href") ? "href" :
+        el.hasAttribute("src") ? "src" :
+        "action";
+
+      const value = el.getAttribute(attr);
+      if (!value) return;
+
+      try {
+        const url = new URL(value, window.location.href);
+
+        if (url.hostname === "localhost") {
+          url.protocol = currentProtocol;
+          url.hostname = currentHostname;
+
+          // optional:
+          // url.port = "8080";
+
+          el.setAttribute(attr, url.toString());
+        }
+      } catch {}
+    });
+  });
+  </script>  
 </body>
 </html>
