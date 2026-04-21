@@ -67,7 +67,7 @@ fi
 # --- repo location ---------------------------------------------------------
 # If this script lives inside a valid clone, use that. Otherwise clone to
 # $DEFAULT_INSTALL_DIR.
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || true)"
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]:-}" 2>/dev/null || true)"
 REPO_ROOT=""
 if [ -n "$SCRIPT_PATH" ] && [ -f "$SCRIPT_PATH" ]; then
   candidate="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
