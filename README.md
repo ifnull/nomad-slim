@@ -21,13 +21,23 @@ education, and offline maps only**. No Ollama, no MySQL/Redis, no admin UI.
 
 ### One-shot install (Raspberry Pi OS, Debian, Ubuntu)
 
+On a fresh Pi, run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ifnull/nomad-slim/refs/heads/main/scripts/install.sh | sudo bash
+```
+
+Or if you've already cloned the repo:
+
 ```bash
 sudo ./scripts/install.sh
 ```
 
-Installs `curl`/`jq`/`git`, prompts to install Docker if missing, creates a
-`nomad-slim.service` systemd unit (so everything starts on boot), offers to
-download content, and prints the service URLs at the end. Idempotent.
+Either path installs `curl`/`jq`/`git`, prompts to install Docker if missing,
+clones to `/opt/nomad-slim` (skipped if you ran it from an existing clone),
+creates a `nomad-slim.service` systemd unit so everything starts on boot,
+offers to download content, and prints the service URLs at the end.
+Idempotent — safe to re-run.
 
 ### Manual
 

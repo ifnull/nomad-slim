@@ -2,13 +2,13 @@
 # One-shot bootstrap for N.O.M.A.D. Slim on Raspberry Pi OS (or any Debian-
 # family system). Idempotent — safe to re-run.
 #
-#   curl -fsSL https://raw.githubusercontent.com/<you>/nomad-slim/main/scripts/install.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/ifnull/nomad-slim/main/scripts/install.sh | sudo bash
 # or from an existing clone:
 #   sudo ./scripts/install.sh
 
 set -euo pipefail
 
-REPO_URL="https://github.com/Crosstalk-Solutions/nomad-slim.git"
+REPO_URL="https://github.com/ifnull/nomad-slim.git"
 DEFAULT_INSTALL_DIR="/opt/nomad-slim"
 SERVICE_NAME="nomad-slim"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
