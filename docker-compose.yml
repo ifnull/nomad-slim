@@ -1,0 +1,54 @@
+# N.O.M.A.D. Slim — Pi-friendly subset of project-nomad
+#
+# Runs only Kiwix (ZIMs), Kolibri (education), and a small nginx that
+# serves a landing page and a MapLibre + PMTiles viewer.
+#
+# No Ollama, no MySQL, no Redis, no admin UI.
+
+name: nomad-slim
+
+services:
+  # Builds /data/library.xml from whatever .zim files are in ./data/zim,
+  # then starts kiwix-serve in library mode with --monitorLibrary so new
+  # files added later are picked up without a restart.
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-tools:3.8.1
+    container_name: nomad_slim_kiwix
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        cd /data
+        rm -f library.xml
+        touch library.xml
+        for f in *.zim; do
+          [ -f "$$f" ] && kiwix-manage library.xml add "$$f" || true
+        done
+        exec kiwix-serve \
+          --library /data/library.xml \
+          --monitorLibrary \
+          --address=all \
+          --port=8080
+    volumes:
+      - ./data/zim:/data
+    ports:
+      - "8090:8080"
+
+  kolibri:
+    image: treehouses/kolibri:0.12.8
+    container_name: nomad_slim_kolibri
+    restart: unless-stopped
+    volumes:
+      - ./data/kolibri:/root/.kolibri
+    ports:
+      - "8300:8080"
+
+  web:
+    build: ./web
+    container_name: nomad_slim_web
+    restart: unless-stopped
+    volumes:
+      - ./data/maps:/usr/share/nginx/html/maps:ro
+    ports:
+      - "8080:80"

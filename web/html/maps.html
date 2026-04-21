@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Maps — N.O.M.A.D. Slim</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="/vendor/maplibre-gl.css">
+<style>
+  html, body, #map { margin: 0; padding: 0; height: 100%; }
+  #picker {
+    position: absolute; top: 10px; left: 10px; z-index: 1;
+    background: white; padding: 8px 12px; border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font: 14px system-ui, sans-serif;
+  }
+  #picker a { color: #0366d6; text-decoration: none; font-size: 12px; }
+  #empty {
+    position: absolute; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    font: 16px system-ui, sans-serif; color: #666; text-align: center; padding: 2rem;
+  }
+</style>
+</head>
+<body>
+<div id="picker">
+  <a href="/">&larr; Home</a> &nbsp;
+  <label>Region: <select id="region"></select></label>
+</div>
+<div id="map"></div>
+<div id="empty">
+  No <code>.pmtiles</code> files found in <code>data/maps/</code>.<br>
+  Drop one in and reload.
+</div>
+<script src="/vendor/maplibre-gl.js"></script>
+<script src="/vendor/pmtiles.js"></script>
+<script>
+(async () => {
+  const protocol = new pmtiles.Protocol();
+  maplibregl.addProtocol("pmtiles", protocol.tile);
+
+  const listing = await fetch("/maps/").then(r => r.ok ? r.json() : []);
+  const files = listing.filter(e => e.type === "file" && e.name.endsWith(".pmtiles"));
+
+  if (!files.length) {
+    document.getElementById("empty").style.display = "flex";
+    document.getElementById("picker").style.display = "none";
+    return;
+  }
+
+  const select = document.getElementById("region");
+  for (const f of files) {
+    const opt = document.createElement("option");
+    opt.value = f.name;
+    opt.textContent = f.name.replace(/\.pmtiles$/, "");
+    select.appendChild(opt);
+  }
+
+  let map;
+  async function show(name) {
+    const url = `/maps/${name}`;
+    const p = new pmtiles.PMTiles(url);
+    protocol.add(p);
+    const h = await p.getHeader();
+
+    if (map) map.remove();
+    map = new maplibregl.Map({
+      container: "map",
+      style: {
+        version: 8,
+        sources: {
+          protomaps: {
+            type: "vector",
+            url: `pmtiles://${url}`,
+            attribution: '<a href="https://github.com/protomaps/basemaps">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+          }
+        },
+        // Minimal, label-free style — no external glyph/sprite fetches.
+        layers: [
+          { id: "bg",         type: "background", paint: { "background-color": "#f7f4ec" } },
+          { id: "earth",      type: "fill", source: "protomaps", "source-layer": "earth",      paint: { "fill-color": "#ffffff" } },
+          { id: "landuse",    type: "fill", source: "protomaps", "source-layer": "landuse",    paint: { "fill-color": "#eef0e9" } },
+          { id: "water",      type: "fill", source: "protomaps", "source-layer": "water",      paint: { "fill-color": "#a6cde0" } },
+          { id: "boundaries", type: "line", source: "protomaps", "source-layer": "boundaries", paint: { "line-color": "#c8c8c8", "line-width": 1 } },
+          { id: "roads",      type: "line", source: "protomaps", "source-layer": "roads",      paint: { "line-color": "#888",   "line-width": 1 } },
+          { id: "buildings",  type: "fill", source: "protomaps", "source-layer": "buildings",  paint: { "fill-color": "#e0ddd4" } }
+        ]
+      },
+      center: [(h.minLon + h.maxLon) / 2, (h.minLat + h.maxLat) / 2],
+      zoom: Math.max(h.minZoom, 4)
+    });
+    map.addControl(new maplibregl.NavigationControl());
+  }
+
+  select.addEventListener("change", e => show(e.target.value));
+  show(files[0].name);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>N.O.M.A.D. Slim</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    max-width: 640px; margin: 4rem auto; padding: 0 1rem; line-height: 1.5;
+  }
+  h1 { margin-bottom: 0.25rem; }
+  p.sub { color: #666; margin-top: 0; }
+  ul { list-style: none; padding: 0; }
+  li { margin: 0.75rem 0; }
+  a.card {
+    display: block; padding: 1rem 1.25rem;
+    border: 1px solid #ccc; border-radius: 8px;
+    text-decoration: none; color: inherit;
+  }
+  a.card:hover { border-color: #666; }
+  .title { font-weight: 600; font-size: 1.1rem; }
+  .desc { color: #666; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+  <h1>N.O.M.A.D. Slim</h1>
+  <p class="sub">Offline library, education, and maps. No AI, no admin UI.</p>
+  <ul>
+    <li><a class="card" href="http://localhost:8090/">
+      <div class="title">Information Library</div>
+      <div class="desc">Wikipedia, medical references, how-to guides (Kiwix)</div>
+    </a></li>
+    <li><a class="card" href="http://localhost:8300/">
+      <div class="title">Education Platform</div>
+      <div class="desc">Khan Academy courses and more (Kolibri)</div>
+    </a></li>
+    <li><a class="card" href="/maps.html">
+      <div class="title">Offline Maps</div>
+      <div class="desc">MapLibre + Protomaps PMTiles viewer</div>
+    </a></li>
+  </ul>
+  <p class="sub">
+    Drop <code>.zim</code> files in <code>data/zim/</code> and
+    <code>.pmtiles</code> files in <code>data/maps/</code>, then restart.
+  </p>
+</body>
+</html>
