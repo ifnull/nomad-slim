@@ -124,10 +124,15 @@ systemctl restart "$SERVICE_NAME"
 # --- content prompts -------------------------------------------------------
 run_as_invoker() {
   # Run a script as the invoking user so downloads land with the right owner.
+  # Redirect the child's stdin to /dev/null: when this installer was itself
+  # invoked via `curl | sudo bash`, the child would otherwise inherit (and
+  # potentially consume) the remaining script text still sitting in the pipe.
+  # The child scripts read interactive prompts from /dev/tty, so cutting off
+  # stdin is safe.
   if [ "$INVOKER" = "root" ]; then
-    (cd "$REPO_ROOT" && bash "$1")
+    (cd "$REPO_ROOT" && bash "$1" </dev/null)
   else
-    sudo -u "$INVOKER" -H bash -c "cd '$REPO_ROOT' && bash '$1'"
+    sudo -u "$INVOKER" -H bash -c "cd '$REPO_ROOT' && bash '$1'" </dev/null
   fi
 }
 

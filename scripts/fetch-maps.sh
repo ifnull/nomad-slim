@@ -35,7 +35,7 @@ if { : </dev/tty; } 2>/dev/null; then TTY_IN=/dev/tty; fi
 prompt_number() {
   local ans
   while :; do
-    read -rp "$1" ans <"$TTY_IN"
+    read -rp "$1" ans <"$TTY_IN" || { echo "error: no interactive input available" >&2; exit 1; }
     [[ "$ans" =~ ^[0-9]+$ ]] && [ "$ans" -ge 1 ] && [ "$ans" -le "$2" ] && { echo "$ans"; return; }
     echo "  enter a number between 1 and $2" >&2
   done
