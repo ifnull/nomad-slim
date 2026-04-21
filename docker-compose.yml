@@ -20,8 +20,10 @@ services:
       - |
         set -e
         cd /data
-        rm -f library.xml
-        touch library.xml
+        cat > library.xml <<'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <library version="20110515"></library>
+        EOF
         for f in *.zim; do
           [ -f "$$f" ] && kiwix-manage library.xml add "$$f" || true
         done

@@ -30,12 +30,24 @@ Then open <http://localhost:8080>.
 
 - **ZIM files** (Wikipedia, medical, survival, etc.) — drop them in `data/zim/`
   then `docker compose restart kiwix`. Get ZIMs from
-  [library.kiwix.org](https://library.kiwix.org) or use the full N.O.M.A.D.
-  Command Center to download them and copy from `/opt/project-nomad/storage/zim/`.
+  [library.kiwix.org](https://library.kiwix.org), or run the included picker
+  which uses project-nomad's curated category/tier manifest:
+
+  ```bash
+  ./scripts/fetch-zims.sh            # interactive: pick category + tier
+  ./scripts/fetch-zims.sh --refresh  # re-pull the manifest
+  ```
 
 - **Maps** — drop Protomaps `.pmtiles` files in `data/maps/`. No restart needed;
-  the viewer rediscovers them on reload. Regional extracts:
-  <https://maps.protomaps.com>.
+  the viewer rediscovers them on reload. Get regional US extracts from
+  project-nomad with the included picker:
+
+  ```bash
+  ./scripts/fetch-maps.sh            # pick region + state(s)
+  ./scripts/fetch-maps.sh --refresh  # re-pull the manifest
+  ```
+
+  Or grab arbitrary regions from <https://maps.protomaps.com>.
 
 - **Kolibri** — use Kolibri's built-in setup wizard at port 8300.
 

@@ -1,0 +1,15 @@
+# Downloaded content and runtime state — keep the directories, not their contents.
+data/*
+!data/zim/
+!data/maps/
+!data/kolibri/
+!data/**/.gitkeep
+
+data/zim/*
+!data/zim/.gitkeep
+
+data/maps/*
+!data/maps/.gitkeep
+
+data/kolibri/*
+!data/kolibri/.gitkeep
