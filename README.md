@@ -19,6 +19,18 @@ education, and offline maps only**. No Ollama, no MySQL/Redis, no admin UI.
 
 ## Usage
 
+### One-shot install (Raspberry Pi OS, Debian, Ubuntu)
+
+```bash
+sudo ./scripts/install.sh
+```
+
+Installs `curl`/`jq`/`git`, prompts to install Docker if missing, creates a
+`nomad-slim.service` systemd unit (so everything starts on boot), offers to
+download content, and prints the service URLs at the end. Idempotent.
+
+### Manual
+
 ```bash
 cd nomad-slim
 docker compose up -d --build
@@ -81,9 +93,10 @@ Kept:
 - Kolibri
 - Offline maps (Protomaps PMTiles)
 
-The maps viewer here is deliberately minimal — label-free vector rendering with
-a handful of layers. For the fully styled Protomaps basemap (with labels,
-sprites, multiple themes), use the full N.O.M.A.D. install.
+The maps viewer ships with a minimal label-free style out of the box and
+auto-upgrades to the full Protomaps style (labels, sprites, 70+ layers) once
+you run `./scripts/fetch-basemap-assets.sh`. Multiple themes and the admin
+region-picker UI are still full-N.O.M.A.D.-only.
 
 ## Resource footprint
 
