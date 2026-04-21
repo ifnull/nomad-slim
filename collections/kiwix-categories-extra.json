@@ -1,0 +1,176 @@
+{
+  "spec_version": "2026-04-21",
+  "notes": "Extra tiered categories in the project-nomad kiwix-categories.json format. Targets TODO items from CATEGORIES-TODO.md: Trades & Vocational and Communications. Agriculture is already covered upstream under slug 'agriculture' (Agriculture & Food).",
+  "categories": [
+    {
+      "name": "Trades & Vocational",
+      "slug": "trades",
+      "icon": "IconTool",
+      "description": "Practical skills for building, fixing, and maintaining: repair guides, mechanics, woodworking, electronics, and technical manuals.",
+      "language": "en",
+      "tiers": [
+        {
+          "name": "Essential",
+          "slug": "trades-essential",
+          "description": "Hands-on repair and shop fundamentals. Start here.",
+          "recommended": true,
+          "resources": [
+            {
+              "id": "ifixit_en_all",
+              "version": "2025-12",
+              "title": "iFixit",
+              "description": "Community-contributed repair guides for phones, laptops, appliances, vehicles, and more.",
+              "url": "https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-12.zim",
+              "size_mb": 3405
+            },
+            {
+              "id": "mechanics.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Motor Vehicle Mechanics Q&A",
+              "description": "Stack Exchange Q&A for car, truck, and small-engine repair and maintenance.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/mechanics.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 323
+            },
+            {
+              "id": "woodworking.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Woodworking Q&A",
+              "description": "Carpentry, cabinetry, tool selection, and finishing techniques.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/woodworking.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 100
+            },
+            {
+              "id": "engineering.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Engineering Q&A",
+              "description": "Cross-discipline engineering questions: structural, mechanical, materials, design.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/engineering.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 242
+            }
+          ]
+        },
+        {
+          "name": "Standard",
+          "slug": "trades-standard",
+          "description": "Electronics, workforce-readiness texts, and networking. Includes everything in Essential.",
+          "includesTier": "trades-essential",
+          "resources": [
+            {
+              "id": "electronics.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Electronics Q&A",
+              "description": "Circuits, microcontrollers, soldering, troubleshooting — the DIY electronics reference.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/electronics.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 3988
+            },
+            {
+              "id": "libretexts.org_en_eng",
+              "version": "2025-01",
+              "title": "Engineering LibreTexts",
+              "description": "Open-source engineering textbooks across mechanical, electrical, civil, and chemical disciplines.",
+              "url": "https://download.kiwix.org/zim/libretexts/libretexts.org_en_eng_2025-01.zim",
+              "size_mb": 646
+            },
+            {
+              "id": "libretexts.org_en_workforce",
+              "version": "2026-01",
+              "title": "Workforce LibreTexts",
+              "description": "Vocational and applied-trades textbooks — construction, HVAC, automotive, welding fundamentals.",
+              "url": "https://download.kiwix.org/zim/libretexts/libretexts.org_en_workforce_2026-01.zim",
+              "size_mb": 489
+            },
+            {
+              "id": "networkengineering.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Network Engineering Q&A",
+              "description": "Routing, switching, cabling, and small-network design.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/networkengineering.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 123
+            }
+          ]
+        },
+        {
+          "name": "Comprehensive",
+          "slug": "trades-comprehensive",
+          "description": "Classic technology literature and historical technical manuals. Includes everything in Standard.",
+          "includesTier": "trades-standard",
+          "resources": [
+            {
+              "id": "gutenberg_en_lcc-t",
+              "version": "2026-03",
+              "title": "Project Gutenberg: Technology",
+              "description": "Library of Congress Class T — engineering, manufacturing, photography, mining, and handicrafts.",
+              "url": "https://download.kiwix.org/zim/gutenberg/gutenberg_en_lcc-t_2026-03.zim",
+              "size_mb": 12545
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Communications",
+      "slug": "communications",
+      "icon": "IconAntenna",
+      "description": "Amateur radio, signal operations, and networking references for emergency and off-grid communication.",
+      "language": "en",
+      "tiers": [
+        {
+          "name": "Essential",
+          "slug": "communications-essential",
+          "description": "Amateur radio Q&A for license study and day-to-day operations. Start here.",
+          "recommended": true,
+          "resources": [
+            {
+              "id": "ham.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Amateur Radio Q&A",
+              "description": "Stack Exchange Q&A covering HF/VHF/UHF operation, antennas, propagation, and licensing.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/ham.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 72
+            }
+          ]
+        },
+        {
+          "name": "Standard",
+          "slug": "communications-standard",
+          "description": "Open-source intelligence video library and networking Q&A. Includes everything in Essential.",
+          "includesTier": "communications-essential",
+          "resources": [
+            {
+              "id": "s2underground_en_all",
+              "version": "2026-04",
+              "title": "S2 Underground",
+              "description": "Open-source intelligence and communications-security video library.",
+              "url": "https://download.kiwix.org/zim/videos/s2underground_en_all_2026-04.zim",
+              "size_mb": 4640
+            },
+            {
+              "id": "networkengineering.stackexchange.com_en_all",
+              "version": "2026-02",
+              "title": "Network Engineering Q&A",
+              "description": "Small-network design, routing, and cabling for on-site or off-grid networks.",
+              "url": "https://download.kiwix.org/zim/stack_exchange/networkengineering.stackexchange.com_en_all_2026-02.zim",
+              "size_mb": 123
+            }
+          ]
+        },
+        {
+          "name": "Comprehensive",
+          "slug": "communications-comprehensive",
+          "description": "U.S. Army signal operations and technical-manual archive. Includes everything in Standard.",
+          "includesTier": "communications-standard",
+          "resources": [
+            {
+              "id": "armypubs_en_all",
+              "version": "2024-12",
+              "title": "U.S. Army Publishing Directorate",
+              "description": "Field manuals including the FM 6 series (signal operations) and broader technical/doctrinal references.",
+              "url": "https://download.kiwix.org/zim/zimit/armypubs_en_all_2024-12.zim",
+              "size_mb": 7851
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

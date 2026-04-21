@@ -13,7 +13,9 @@ WIKIPEDIA_URL="https://raw.githubusercontent.com/Crosstalk-Solutions/project-nom
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ZIM_DIR="$REPO_ROOT/data/zim"
+CAT_CACHE_UPSTREAM="$REPO_ROOT/data/.kiwix-categories-upstream.json"
 CAT_CACHE="$REPO_ROOT/data/.kiwix-categories.json"
+EXTRA_CATEGORIES="$REPO_ROOT/collections/kiwix-categories-extra.json"
 WIKI_CACHE="$REPO_ROOT/data/.kiwix-wikipedia.json"
 
 for dep in jq curl; do
@@ -32,8 +34,16 @@ fetch() {
     curl -fsSL "$1" -o "$2"
   fi
 }
-fetch "$CATEGORIES_URL" "$CAT_CACHE"
+fetch "$CATEGORIES_URL" "$CAT_CACHE_UPSTREAM"
 fetch "$WIKIPEDIA_URL" "$WIKI_CACHE"
+
+# Merge upstream categories with our local extras (Trades, Agriculture, Communications).
+if [ -f "$EXTRA_CATEGORIES" ]; then
+  jq -s '.[0] as $up | .[1] as $ex | $up | .categories += $ex.categories' \
+    "$CAT_CACHE_UPSTREAM" "$EXTRA_CATEGORIES" > "$CAT_CACHE"
+else
+  cp "$CAT_CACHE_UPSTREAM" "$CAT_CACHE"
+fi
 
 prompt_number() {
   # $1=prompt $2=max (1..N valid)

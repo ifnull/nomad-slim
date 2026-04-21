@@ -50,15 +50,21 @@ Then open <http://localhost:8080>.
 
 ### Adding content
 
-- **ZIM files** (Wikipedia, medical, survival, etc.) — drop them in `data/zim/`
-  then `docker compose restart kiwix`. Get ZIMs from
-  [library.kiwix.org](https://library.kiwix.org), or run the included picker
-  which uses project-nomad's curated category/tier manifest:
+- **ZIM files** (Wikipedia, medical, survival, etc.) — drop them in `data/zim/`;
+  Kiwix is launched with `--monitorLibrary`, so new files are picked up live
+  without a restart. Ways to get ZIMs:
 
-  ```bash
-  ./scripts/fetch-zims.sh            # interactive: pick category + tier
-  ./scripts/fetch-zims.sh --refresh  # re-pull the manifest
-  ```
+  - **Curated picker** — project-nomad's category/tier manifest, plus our
+    local extras for Trades & Vocational and Communications (see
+    [`collections/kiwix-categories-extra.json`](collections/kiwix-categories-extra.json)):
+
+    ```bash
+    ./scripts/fetch-zims.sh            # interactive: pick category + tier
+    ./scripts/fetch-zims.sh --refresh  # re-pull the upstream manifest
+    ```
+
+  - **Browse the full catalog** — <https://library.kiwix.org>
+  - **Raw file index** (good for `wget`/`curl`) — <https://download.kiwix.org/zim/>
 
 - **Maps** — drop Protomaps `.pmtiles` files in `data/maps/`. No restart needed;
   the viewer rediscovers them on reload. Get regional US extracts from

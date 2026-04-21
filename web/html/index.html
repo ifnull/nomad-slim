@@ -41,9 +41,21 @@
       <div class="desc">MapLibre + Protomaps PMTiles viewer</div>
     </a></li>
   </ul>
+  <h2 style="margin-top:2rem;font-size:1.1rem;">More ZIMs (online)</h2>
+  <ul>
+    <li><a class="card" href="https://library.kiwix.org" target="_blank" rel="noopener">
+      <div class="title">Kiwix Library — Browse</div>
+      <div class="desc">Searchable catalog of every published ZIM (Wikipedia, medical, survival, etc.)</div>
+    </a></li>
+    <li><a class="card" href="https://download.kiwix.org/zim/" target="_blank" rel="noopener">
+      <div class="title">Kiwix Downloads — Raw Index</div>
+      <div class="desc">Direct file listing at download.kiwix.org/zim — handy for scripted or <code>wget</code>-style downloads</div>
+    </a></li>
+  </ul>
   <p class="sub">
     Drop <code>.zim</code> files in <code>data/zim/</code> and
-    <code>.pmtiles</code> files in <code>data/maps/</code>, then restart.
+    <code>.pmtiles</code> files in <code>data/maps/</code> — the Kiwix viewer
+    auto-detects new ZIMs; the maps viewer rediscovers PMTiles on reload.
   </p>
 </body>
 </html>
