@@ -53,6 +53,5 @@ services:
     volumes:
       - ./data/maps:/usr/share/nginx/html/maps:ro
       - ./data/basemaps-assets:/usr/share/nginx/html/basemaps-assets:ro
-      - ./data/nomad-base-styles.json:/usr/share/nginx/html/nomad-base-styles.json:ro
     ports:
       - "8080:80"

@@ -65,6 +65,7 @@ Then open <http://localhost:8080>.
 
   - **Browse the full catalog** — <https://library.kiwix.org>
   - **Raw file index** (good for `wget`/`curl`) — <https://download.kiwix.org/zim/>
+  - **Internet Archive mirror** (older/archived ZIMs) — <https://archive.org/details/zimarchive>
 
 - **Maps** — drop Protomaps `.pmtiles` files in `data/maps/`. No restart needed;
   the viewer rediscovers them on reload. Get regional US extracts from

@@ -16,4 +16,5 @@ data/kolibri/*
 
 # Downloaded basemap glyphs/sprites + style (from fetch-basemap-assets.sh).
 data/basemaps-assets/
+# Legacy location from earlier installs — safe to leave ignored.
 data/nomad-base-styles.json

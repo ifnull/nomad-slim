@@ -57,7 +57,7 @@
 
   // Try the labeled base style first; fall back to a label-free inline style
   // if the user hasn't run scripts/fetch-basemap-assets.sh yet.
-  const baseStyle = await fetch("/nomad-base-styles.json")
+  const baseStyle = await fetch("/basemaps-assets/nomad-base-styles.json")
     .then(r => r.ok ? r.json() : null)
     .catch(() => null);
 
