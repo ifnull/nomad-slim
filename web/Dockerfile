@@ -1,8 +1,10 @@
 FROM nginx:alpine
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl openssl
 
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /docker-entrypoint.d/50-nomad-certs.sh
+RUN chmod +x /docker-entrypoint.d/50-nomad-certs.sh
 COPY html /usr/share/nginx/html
 
 # Vendor MapLibre + PMTiles protocol at build time so runtime is fully offline.
