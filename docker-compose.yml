@@ -53,5 +53,7 @@ services:
     volumes:
       - ./data/maps:/usr/share/nginx/html/maps:ro
       - ./data/basemaps-assets:/usr/share/nginx/html/basemaps-assets:ro
+      - ./data/certs:/etc/nginx/certs
     ports:
       - "8080:80"
+      - "8443:443"

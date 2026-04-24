@@ -95,6 +95,21 @@ if [ -z "$REPO_ROOT" ]; then
 fi
 log "Repo root: $REPO_ROOT"
 
+# --- self-signed cert for HTTPS --------------------------------------------
+# Generate a CA + server cert so nginx can serve HTTPS, which is required
+# for geolocation on phones accessing the maps page over LAN.
+log "Generating self-signed TLS certificates..."
+mkdir -p "$REPO_ROOT/data/certs"
+chown "$INVOKER:$INVOKER" "$REPO_ROOT/data/certs" 2>/dev/null || true
+run_as_invoker_sync() {
+  if [ "$INVOKER" = "root" ]; then
+    bash "$1" </dev/null
+  else
+    sudo -u "$INVOKER" -H bash "$1" </dev/null
+  fi
+}
+run_as_invoker_sync "$REPO_ROOT/scripts/generate-cert.sh"
+
 # --- systemd unit ----------------------------------------------------------
 log "Installing systemd unit $SERVICE_FILE ..."
 cat > "$SERVICE_FILE" <<EOF
@@ -162,6 +177,11 @@ cat <<EOF
     Offline Maps        http://$host_ip:8080/maps.html
     Information Library http://$host_ip:8090
     Education Platform  http://$host_ip:8300
+
+  For GPS on phones, use HTTPS (after installing data/certs/ca.crt on the device):
+    HTTPS landing       https://$host_ip:8443
+    HTTPS maps          https://$host_ip:8443/maps.html
+    Download the CA     https://$host_ip:8443/ca.crt
 
   Service management:
     systemctl status  $SERVICE_NAME

@@ -115,6 +115,16 @@
       zoom: Math.max(h.minZoom, 4)
     });
     map.addControl(new maplibregl.NavigationControl());
+    // GeolocateControl requires a secure context (HTTPS or localhost) —
+    // browsers silently refuse navigator.geolocation on plain HTTP over LAN.
+    // Served cert comes from the nomad-slim CA; see scripts/generate-cert.sh.
+    if (window.isSecureContext) {
+      map.addControl(new maplibregl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true,
+        showUserHeading: true
+      }));
+    }
   }
 
   select.addEventListener("change", e => show(e.target.value));

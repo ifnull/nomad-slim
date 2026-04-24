@@ -61,6 +61,12 @@
     <code>.pmtiles</code> files in <code>data/maps/</code> — the Kiwix viewer
     auto-detects new ZIMs; the maps viewer rediscovers PMTiles on reload.
   </p>
+  <p class="sub">
+    On a phone? To enable GPS on the maps page you'll need to access it over
+    HTTPS and trust the local CA:
+    <a href="/ca.crt" download>download <code>nomad-slim-ca.crt</code></a>,
+    install it on your device, then visit the HTTPS URL on port 8443.
+  </p>
   
   <script>
   document.addEventListener("DOMContentLoaded", () => {
