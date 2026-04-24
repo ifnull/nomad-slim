@@ -40,7 +40,20 @@
       <div class="title">Offline Maps</div>
       <div class="desc">MapLibre + Protomaps PMTiles viewer</div>
     </a></li>
+    <li><a class="card" id="maps-https" href="#">
+      <div class="title">Offline Maps (HTTPS + GPS)</div>
+      <div class="desc">Same viewer over TLS on port 8443. Required for geolocation on phones — install the CA certificate below first.</div>
+    </a></li>
   </ul>
+  <script>
+    // Rewrite the HTTPS maps link to the current hostname at page load. Done
+    // here rather than in the general href rewriter so the protocol and port
+    // always stay https+8443 regardless of the current page's protocol.
+    (function () {
+      var el = document.getElementById("maps-https");
+      if (el) el.href = "https://" + window.location.hostname + ":8443/maps.html";
+    })();
+  </script>
   <h2 style="margin-top:2rem;font-size:1.1rem;">More ZIMs (online)</h2>
   <ul>
     <li><a class="card" href="https://library.kiwix.org" target="_blank" rel="noopener">
@@ -56,16 +69,24 @@
       <div class="desc">Historical ZIM snapshots mirrored on archive.org — older versions and content no longer hosted on Kiwix</div>
     </a></li>
   </ul>
+  <h2 style="margin-top:2rem;font-size:1.1rem;">Mobile setup (GPS on maps)</h2>
+  <ul>
+    <li><a class="card" href="/ca.crt" download="nomad-slim-ca.crt">
+      <div class="title">Download Root CA certificate</div>
+      <div class="desc">
+        Install <code>nomad-slim-ca.crt</code> on your phone/tablet, trust it,
+        then visit the HTTPS address (port <code>8443</code>) to enable the
+        locate-me button on the maps page. iOS: Settings → VPN &amp; Device
+        Management → install, then General → About → Certificate Trust
+        Settings → enable. Android: Settings → Security → Install a
+        certificate → CA certificate.
+      </div>
+    </a></li>
+  </ul>
   <p class="sub">
     Drop <code>.zim</code> files in <code>data/zim/</code> and
     <code>.pmtiles</code> files in <code>data/maps/</code> — the Kiwix viewer
     auto-detects new ZIMs; the maps viewer rediscovers PMTiles on reload.
-  </p>
-  <p class="sub">
-    On a phone? To enable GPS on the maps page you'll need to access it over
-    HTTPS and trust the local CA:
-    <a href="/ca.crt" download>download <code>nomad-slim-ca.crt</code></a>,
-    install it on your device, then visit the HTTPS URL on port 8443.
   </p>
   
   <script>
