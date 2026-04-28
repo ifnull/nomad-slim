@@ -12,8 +12,34 @@
     background: white; padding: 8px 12px; border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     font: 14px system-ui, sans-serif;
+    display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
   }
   #picker a { color: #0366d6; text-decoration: none; font-size: 12px; }
+  #search {
+    padding: 2px 6px; font: 12px ui-monospace, Menlo, monospace;
+    border: 1px solid #ccc; border-radius: 3px; width: 18em;
+  }
+  #coords {
+    position: absolute; bottom: 10px; left: 10px; z-index: 1;
+    background: rgba(255,255,255,0.92); padding: 8px 12px; border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font: 12px ui-monospace, Menlo, monospace; line-height: 1.55;
+    user-select: text;
+  }
+  #coords .lbl { color: #888; display: inline-block; width: 3.6em; }
+  #coords .src { color: #888; font-size: 10px; margin-left: 0.5em; }
+  .crosshair {
+    position: absolute; left: 50%; top: 50%; width: 20px; height: 20px;
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 2;
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.7);
+  }
+  .crosshair::before, .crosshair::after {
+    content: ""; position: absolute; background: rgba(0,0,0,0.5);
+  }
+  .crosshair::before { left: 50%; top: -6px; bottom: -6px; width: 1px; transform: translateX(-50%); }
+  .crosshair::after  { top: 50%; left: -6px; right: -6px; height: 1px; transform: translateY(-50%); }
   #empty {
     position: absolute; inset: 0; display: none;
     align-items: center; justify-content: center;
@@ -23,16 +49,33 @@
 </head>
 <body>
 <div id="picker">
-  <a href="/">&larr; Home</a> &nbsp;
+  <a href="/">&larr; Home</a>
   <label>Region: <select id="region"></select></label>
+  <input id="search" type="text" placeholder="Plus Code, MGRS, or lat,lng — Enter to jump" autocomplete="off" spellcheck="false">
 </div>
 <div id="map"></div>
+<div class="crosshair"></div>
+<div id="coords">
+  <div><span class="lbl">Lat,Lng</span><span class="ll"></span></div>
+  <div><span class="lbl">Plus</span><span class="pc"></span></div>
+  <div><span class="lbl">MGRS</span><span class="mgrs"></span></div>
+  <div class="src">crosshair · click map to lock</div>
+</div>
 <div id="empty">
   No <code>.pmtiles</code> files found in <code>data/maps/</code>.<br>
   Drop one in and reload.
 </div>
 <script src="/vendor/maplibre-gl.js"></script>
 <script src="/vendor/pmtiles.js"></script>
+<!-- The OLC reference impl is CommonJS-only; this shim catches its trailing
+     `exports.OpenLocationCode = ...` so the browser doesn't ReferenceError. -->
+<script>var exports = {};</script>
+<script src="/vendor/openlocationcode.js"></script>
+<script src="/vendor/mgrs.js"></script>
+<script>
+  // Single OLC instance for the whole page (encode/decode are instance methods).
+  const olc = new OpenLocationCode();
+</script>
 <script>
 (async () => {
   const protocol = new pmtiles.Protocol();
@@ -125,7 +168,94 @@
         showUserHeading: true
       }));
     }
+    bindCoords();
   }
+
+  // --- coordinate readout + Plus Code / MGRS / lat,lng search ---
+  const ll   = document.querySelector("#coords .ll");
+  const pc   = document.querySelector("#coords .pc");
+  const mg   = document.querySelector("#coords .mgrs");
+  const src  = document.querySelector("#coords .src");
+  const search = document.getElementById("search");
+
+  function fmtMgrs(s) {
+    // mgrs.forward returns "10SEG5113080998"; prettify to "10S EG 51130 80998".
+    const m = s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d+)$/);
+    if (!m) return s;
+    const half = m[3].length / 2;
+    return `${m[1]} ${m[2]} ${m[3].slice(0, half)} ${m[3].slice(half)}`;
+  }
+  function safeMgrs(lng, lat) {
+    try { return fmtMgrs(mgrs.forward([lng, lat], 5)); } catch { return "—"; }
+  }
+  function safePlus(lat, lng) {
+    try { return olc.encode(lat, lng, 10); } catch { return "—"; }
+  }
+  function updateReadout(lat, lng, label) {
+    ll.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    pc.textContent = safePlus(lat, lng);
+    mg.textContent = safeMgrs(lng, lat);
+    if (label) src.textContent = label;
+  }
+
+  // A "locked" point set by clicking. Null means follow the crosshair (center).
+  let lockedMarker = null;
+
+  function bindCoords() {
+    map.on("move", () => {
+      if (!lockedMarker) {
+        const c = map.getCenter();
+        updateReadout(c.lat, c.lng, "crosshair · click map to lock");
+      }
+    });
+    map.on("click", (e) => {
+      if (lockedMarker) lockedMarker.remove();
+      lockedMarker = new maplibregl.Marker({ color: "#d63384" })
+        .setLngLat(e.lngLat)
+        .addTo(map);
+      lockedMarker.getElement().addEventListener("click", () => {
+        lockedMarker.remove(); lockedMarker = null;
+        const c = map.getCenter();
+        updateReadout(c.lat, c.lng, "crosshair · click map to lock");
+      });
+      updateReadout(e.lngLat.lat, e.lngLat.lng, "locked · click pin to clear");
+    });
+    const c = map.getCenter();
+    updateReadout(c.lat, c.lng, "crosshair · click map to lock");
+  }
+
+  function jumpTo(query) {
+    const q = query.trim();
+    if (!q) return;
+    // Plus Code (full or short — short needs reference; we only accept full).
+    if (olc && olc.isFull && olc.isFull(q)) {
+      const a = olc.decode(q);
+      map.flyTo({ center: [a.longitudeCenter, a.latitudeCenter], zoom: 14 });
+      return;
+    }
+    // MGRS (spaces optional)
+    try {
+      const p = mgrs.toPoint(q.replace(/\s+/g, ""));
+      if (Array.isArray(p) && p.length === 2 && isFinite(p[0]) && isFinite(p[1])) {
+        map.flyTo({ center: p, zoom: 14 });
+        return;
+      }
+    } catch {}
+    // lat,lng decimal
+    const m = q.match(/^(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)$/);
+    if (m) {
+      const lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+      if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+        map.flyTo({ center: [lng, lat], zoom: 14 });
+        return;
+      }
+    }
+    search.style.background = "#fee";
+    setTimeout(() => { search.style.background = ""; }, 600);
+  }
+  search.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); jumpTo(search.value); }
+  });
 
   select.addEventListener("change", e => show(e.target.value));
   show(files[0].name);
