@@ -49,10 +49,20 @@
 </head>
 <body>
 <div id="picker">
-  <a href="/">&larr; Home</a>
+  <a id="home-link" href="/">&larr; Home</a>
   <label>Region: <select id="region"></select></label>
   <input id="search" type="text" placeholder="Plus Code, MGRS, or lat,lng — Enter to jump" autocomplete="off" spellcheck="false">
 </div>
+<script>
+  // Always send "Home" to the canonical HTTP dashboard on :8080. The HTTPS
+  // endpoint on :8443 only exists so the geolocation API works on phones —
+  // Kiwix (8090) and Kolibri (8300) only speak HTTP, so the dashboard's
+  // service cards must be reached over HTTP to actually open them.
+  (function () {
+    var el = document.getElementById("home-link");
+    if (el) el.href = "http://" + window.location.hostname + ":8080/";
+  })();
+</script>
 <div id="map"></div>
 <div class="crosshair"></div>
 <div id="coords">

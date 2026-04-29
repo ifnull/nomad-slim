@@ -90,34 +90,29 @@
   </p>
   
   <script>
+  // Rewrite localhost-only links to the current hostname so the dashboard
+  // works when accessed over LAN. Leave protocol and port alone — Kiwix
+  // (8090) and Kolibri (8300) only speak HTTP, so forcing the page's
+  // protocol onto them would break those links when the dashboard is
+  // viewed over HTTPS.
   document.addEventListener("DOMContentLoaded", () => {
-    const currentProtocol = window.location.protocol;
     const currentHostname = window.location.hostname;
-
     document.querySelectorAll("[href],[src],[action]").forEach(el => {
       const attr =
         el.hasAttribute("href") ? "href" :
         el.hasAttribute("src") ? "src" :
         "action";
-
       const value = el.getAttribute(attr);
       if (!value) return;
-
       try {
         const url = new URL(value, window.location.href);
-
         if (url.hostname === "localhost") {
-          url.protocol = currentProtocol;
           url.hostname = currentHostname;
-
-          // optional:
-          // url.port = "8080";
-
           el.setAttribute(attr, url.toString());
         }
       } catch {}
     });
   });
-  </script>  
+  </script>
 </body>
 </html>
