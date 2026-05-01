@@ -55,5 +55,5 @@ services:
       - ./data/basemaps-assets:/usr/share/nginx/html/basemaps-assets:ro
       - ./data/certs:/etc/nginx/certs
     ports:
-      - "8080:80"
+      - "80:80"
       - "8443:443"

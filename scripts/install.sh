@@ -173,8 +173,8 @@ cat <<EOF
 ==============================================================
   N.O.M.A.D. Slim is running. Open any of these from your LAN:
 
-    Landing page        http://$host_ip:8080
-    Offline Maps        http://$host_ip:8080/maps.html
+    Landing page        http://$host_ip
+    Offline Maps        http://$host_ip/maps.html
     Information Library http://$host_ip:8090
     Education Platform  http://$host_ip:8300
 

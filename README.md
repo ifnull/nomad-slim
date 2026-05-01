@@ -7,10 +7,10 @@ education, and offline maps only**. No Ollama, no MySQL/Redis, no admin UI.
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| Landing page | http://localhost:8080 | Links to everything below |
+| Landing page | http://localhost | Links to everything below |
 | Information Library (Kiwix) | http://localhost:8090 | Serves `.zim` files from `data/zim/` |
 | Education Platform (Kolibri) | http://localhost:8300 | Khan Academy etc., data in `data/kolibri/` |
-| Offline Maps | http://localhost:8080/maps.html | MapLibre + PMTiles viewer over `data/maps/` |
+| Offline Maps | http://localhost/maps.html | MapLibre + PMTiles viewer over `data/maps/` |
 
 ## Requirements
 
@@ -46,7 +46,7 @@ cd nomad-slim
 docker compose up -d --build
 ```
 
-Then open <http://localhost:8080>.
+Then open <http://localhost>.
 
 ### Adding content
 
