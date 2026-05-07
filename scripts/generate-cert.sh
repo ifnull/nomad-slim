@@ -32,12 +32,22 @@ chmod 755 "$CERTS_DIR"
 HOSTNAME_SHORT="$(hostname 2>/dev/null || echo nomad-slim)"
 HOSTNAME_MDNS="${HOSTNAME_SHORT}.local"
 
+# Router-resolved names that aren't derivable from `hostname`. Override at
+# install time with EXTRA_SAN_HOSTS="myname.lan,foo.bar" if your router uses
+# a different domain.
+EXTRA_SAN_HOSTS="${EXTRA_SAN_HOSTS:-library.lan,library}"
+
 SAN_ENTRIES=(
   "DNS:localhost"
   "DNS:$HOSTNAME_SHORT"
   "DNS:$HOSTNAME_MDNS"
   "IP:127.0.0.1"
 )
+IFS=',' read -ra _extra <<< "$EXTRA_SAN_HOSTS"
+for h in "${_extra[@]}"; do
+  h="${h// /}"
+  [ -n "$h" ] && SAN_ENTRIES+=("DNS:$h")
+done
 while read -r ip; do
   [ -n "$ip" ] && SAN_ENTRIES+=("IP:$ip")
 done < <(hostname -I 2>/dev/null | tr ' ' '\n' | grep -v '^$' || true)
