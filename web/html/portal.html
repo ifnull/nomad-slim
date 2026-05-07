@@ -4,10 +4,23 @@
 <meta charset="utf-8">
 <title>Library — Offline Wi-Fi</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- Tells iOS Captive Network Assistant this is the entire portal — there's
-     no follow-up internet check that will succeed, so the OS shouldn't try
-     to verify connectivity again after dismissal. -->
 <meta http-equiv="Cache-Control" content="no-store">
+<!-- Platform sniff runs in <head> so the OS-specific note is correct on
+     first paint — captive-portal browsers can be slow and a flash of the
+     wrong instructions would be confusing. -->
+<script>
+  (function () {
+    var ua = navigator.userAgent || "";
+    var cls = "is-desktop";
+    if (/iPad|iPhone|iPod/.test(ua) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+      cls = "is-ios";
+    } else if (/Android/.test(ua)) {
+      cls = "is-android";
+    }
+    document.documentElement.className = cls;
+  })();
+</script>
 <style>
   html, body { margin: 0; padding: 0; }
   body {
@@ -20,7 +33,7 @@
   .sub { margin: 0 0 1.5rem; color: #666; }
   p { color: #333; }
   a.cta {
-    display: block; margin: 1.75rem 0 1rem;
+    display: block; margin: 1.5rem 0 1rem;
     padding: 1rem 1.25rem;
     background: #0366d6; color: #fff;
     text-align: center; text-decoration: none;
@@ -28,17 +41,52 @@
     font-size: 1.15rem; font-weight: 600;
   }
   a.cta:active { background: #024999; }
-  .hint {
+
+  .full-access {
+    margin: 1.25rem 0;
+    background: #fff; border: 1px solid #d8d2bf;
+    border-radius: .5rem;
+    padding: .9rem 1.1rem;
+  }
+  .full-access .label {
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .07em;
+    color: #888; margin-bottom: .35rem;
+  }
+  .full-access .url {
+    font: 600 1.25rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #0366d6; user-select: all; -webkit-user-select: all;
+    word-break: break-all;
+  }
+  .full-access .url .proto { background: #fff3b0; padding: 0 .15rem; border-radius: 3px; }
+  .full-access .tip { margin-top: .5rem; font-size: .85rem; color: #555; }
+
+  button.close-btn {
+    display: block; width: 100%;
+    margin: 1.25rem 0 .5rem;
+    padding: .85rem 1rem;
+    background: #fff; color: #1a1a1a;
+    border: 1px solid #b8b1a0; border-radius: .5rem;
+    font: 600 1rem -apple-system, system-ui, sans-serif;
+    cursor: pointer;
+  }
+  button.close-btn:active { background: #ece8da; }
+
+  .platform-note {
+    display: none;
     background: #fff8e1; border: 1px solid #f0d97a;
     padding: .75rem 1rem; border-radius: .5rem;
     font-size: .9rem; color: #6b5a00;
+    margin: .5rem 0 0;
   }
+  html.is-ios     .ios-only     { display: block; }
+  html.is-android .android-only { display: block; }
+  html.is-desktop .desktop-only { display: block; }
+
   code { background: #ece8da; padding: 0 .25rem; border-radius: 3px; font-size: .95em; }
-  ul.list { list-style: none; padding: 0; margin: 1rem 0 0; }
+  ul.list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
   ul.list li { margin: .4rem 0; }
   ul.list a { color: #0366d6; text-decoration: none; }
 </style>
-<link rel="icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==">
 </head>
 <body>
 <div class="wrap">
@@ -51,10 +99,29 @@
 
   <a class="cta" href="http://library.lan/">Open the Library</a>
 
-  <div class="hint">
-    <strong>Stuck on a blank screen?</strong> Tap <em>Cancel</em> or
-    <em>Done</em> at the top of this window, then open your normal browser
-    and go to <code>http://library.lan</code>.
+  <div class="full-access">
+    <div class="label">For full access to all features</div>
+    <div class="url"><span class="proto">http://</span>library.lan</div>
+    <div class="tip">Type the <code>http://</code> exactly — without it, your
+    browser may search the web or try HTTPS instead of going to the library.</div>
+  </div>
+
+  <button id="close-btn" type="button" class="close-btn">Close this window &amp; open in browser</button>
+
+  <div class="platform-note ios-only">
+    <strong>On iPhone/iPad:</strong> if the button above doesn't dismiss this
+    window, tap <em>Cancel</em> at the top, then choose <em>Use Without
+    Internet</em>. That's the right choice — this network is meant to be
+    used without internet. Then open Safari and go to
+    <code>http://library.lan</code>.
+  </div>
+  <div class="platform-note android-only">
+    <strong>On Android:</strong> if the button above doesn't dismiss this
+    window, tap the menu (⋮) and choose <em>Use this network as is</em>.
+    Then open Chrome and go to <code>http://library.lan</code>.
+  </div>
+  <div class="platform-note desktop-only">
+    Close this tab and visit <code>http://library.lan</code> in any browser.
   </div>
 
   <ul class="list">
@@ -64,5 +131,13 @@
     <li>&rarr; <a href="http://library.lan:8300/">library.lan:8300</a> &mdash; Kolibri courses</li>
   </ul>
 </div>
+<script>
+  // Best-effort window close. iOS CNA and Android captive portals
+  // sometimes honor window.close(); when they don't, the platform-specific
+  // note above tells the user how to dismiss manually.
+  document.getElementById("close-btn").addEventListener("click", function () {
+    try { window.close(); } catch (e) {}
+  });
+</script>
 </body>
 </html>
