@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library — Offline Wi-Fi</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Tells iOS Captive Network Assistant this is the entire portal — there's
+     no follow-up internet check that will succeed, so the OS shouldn't try
+     to verify connectivity again after dismissal. -->
+<meta http-equiv="Cache-Control" content="no-store">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 16px/1.5 -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+    background: #f7f4ec; color: #1a1a1a;
+    min-height: 100vh; padding: 2rem 1.25rem; box-sizing: border-box;
+  }
+  .wrap { max-width: 32rem; margin: 0 auto; }
+  h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+  .sub { margin: 0 0 1.5rem; color: #666; }
+  p { color: #333; }
+  a.cta {
+    display: block; margin: 1.75rem 0 1rem;
+    padding: 1rem 1.25rem;
+    background: #0366d6; color: #fff;
+    text-align: center; text-decoration: none;
+    border-radius: .5rem;
+    font-size: 1.15rem; font-weight: 600;
+  }
+  a.cta:active { background: #024999; }
+  .hint {
+    background: #fff8e1; border: 1px solid #f0d97a;
+    padding: .75rem 1rem; border-radius: .5rem;
+    font-size: .9rem; color: #6b5a00;
+  }
+  code { background: #ece8da; padding: 0 .25rem; border-radius: 3px; font-size: .95em; }
+  ul.list { list-style: none; padding: 0; margin: 1rem 0 0; }
+  ul.list li { margin: .4rem 0; }
+  ul.list a { color: #0366d6; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Offline Library</h1>
+  <p class="sub">Connected. No internet — local archive only.</p>
+
+  <p>This Wi-Fi serves a self-contained library: Wikipedia, medical and
+  survival references, Khan Academy courses, and offline maps. Nothing
+  here reaches the internet.</p>
+
+  <a class="cta" href="http://library.lan/">Open the Library</a>
+
+  <div class="hint">
+    <strong>Stuck on a blank screen?</strong> Tap <em>Cancel</em> or
+    <em>Done</em> at the top of this window, then open your normal browser
+    and go to <code>http://library.lan</code>.
+  </div>
+
+  <ul class="list">
+    <li>&rarr; <a href="http://library.lan/">library.lan</a> &mdash; main page</li>
+    <li>&rarr; <a href="http://library.lan/maps.html">library.lan/maps.html</a> &mdash; offline maps</li>
+    <li>&rarr; <a href="http://library.lan:8090/">library.lan:8090</a> &mdash; Kiwix (Wikipedia, etc.)</li>
+    <li>&rarr; <a href="http://library.lan:8300/">library.lan:8300</a> &mdash; Kolibri courses</li>
+  </ul>
+</div>
+</body>
+</html>
